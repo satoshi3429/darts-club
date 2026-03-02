@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Orions Darts Club</title>
+  <meta name="description" content="Orions Darts Club — Practice. Precision. Orbit." />
+  <meta property="og:title" content="Orions Darts Club" />
+  <meta property="og:description" content="Practice. Precision. Orbit." />
+  <meta name="theme-color" content="#0b1220" />
+
+  <style>
+    /* ====== Base / Theme ====== */
+    :root{
+      --bg0:#070a12; --bg1:#0b1220; --card:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.12); --text:#eaf2ff; --muted:rgba(234,242,255,.72);
+      --a0:#7c5cff; --a1:#33d6ff; --a2:#00ffa8;
+      --shadow: 0 20px 70px rgba(0,0,0,.45);
+      --radius: 18px;
+      --max: 1100px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    [data-theme="light"]{
+      --bg0:#f6f8ff; --bg1:#ffffff; --card:rgba(0,0,0,.045);
+      --line:rgba(0,0,0,.10); --text:#0e1320; --muted:rgba(14,19,32,.72);
+      --shadow: 0 20px 70px rgba(0,0,0,.12);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(124,92,255,.35), transparent 60%),
+        radial-gradient(900px 600px at 95% 10%, rgba(51,214,255,.28), transparent 55%),
+        radial-gradient(900px 600px at 70% 100%, rgba(0,255,168,.22), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 20px}
+    .grid{display:grid; gap:16px}
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:12px 14px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(51,214,255,.9));
+      color:white; font-weight:650; border:0; cursor:pointer;
+      box-shadow: 0 12px 30px rgba(124,92,255,.20);
+      transition: transform .15s ease, filter .2s ease;
+    }
+    .btn:hover{transform: translateY(-1px); filter:saturate(1.05)}
+    .btn:active{transform: translateY(0px)}
+    .btn.secondary{
+      background: transparent; color:var(--text);
+      border:1px solid var(--line); box-shadow:none;
+      backdrop-filter: blur(10px);
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius:999px; font-size:12px; color:var(--muted);
+      backdrop-filter: blur(10px);
+    }
+    .card{
+      border:1px solid var(--line);
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .card .inner{padding:18px}
+    .title{letter-spacing:.2px}
+    .muted{color:var(--muted)}
+    .mono{font-family:var(--mono)}
+
+    /* ====== Top Nav ====== */
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(180deg, rgba(10,14,25,.78), rgba(10,14,25,.35));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    [data-theme="light"] header{
+      background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.52));
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      font-weight:800;
+    }
+    .logo{
+      width:34px; height:34px; border-radius:12px;
+      background: radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.92), rgba(255,255,255,.2)),
+                  linear-gradient(135deg, rgba(124,92,255,1), rgba(51,214,255,1));
+      box-shadow: 0 16px 40px rgba(124,92,255,.22);
+      position:relative;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:8px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.35);
+      transform: rotate(15deg);
+    }
+    .navlinks{
+      display:flex; gap:14px; align-items:center;
+    }
+    .navlinks a{
+      font-size:13px; color:var(--muted);
+      padding:8px 10px; border-radius:10px;
+      transition: background .2s ease, color .2s ease;
+    }
+    .navlinks a:hover{background: rgba(255,255,255,.06); color:var(--text)}
+    .actions{display:flex; gap:10px; align-items:center}
+    .iconbtn{
+      width:40px; height:40px; border-radius:12px;
+      border:1px solid var(--line); background: rgba(255,255,255,.03);
+      display:grid; place-items:center; cursor:pointer;
+      transition: transform .15s ease, background .2s ease;
+      backdrop-filter: blur(10px);
+    }
+    .iconbtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
+    .icon{width:18px; height:18px; opacity:.9}
+
+    /* ====== Hero ====== */
+    .hero{padding:48px 0 22px}
+    .heroGrid{
+      display:grid; gap:16px;
+      grid-template-columns: 1.2fr .8fr;
+      align-items:stretch;
+    }
+    @media (max-width: 900px){
+      .heroGrid{grid-template-columns:1fr}
+      .navlinks{display:none}
+    }
+    .heroCard{padding:26px}
+    .h1{
+      font-size: clamp(30px, 4.2vw, 54px);
+      line-height:1.05;
+      margin:12px 0 10px;
+    }
+    .sub{
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 62ch;
+    }
+    .heroBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+    .statRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
+    .stat{
+      flex:1;
+      min-width: 150px;
+      padding:12px 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius:14px;
+    }
+    .stat .big{font-size:18px; font-weight:800}
+    .stat .lbl{font-size:12px; color:var(--muted)}
+    .glowline{
+      height:1px; margin:18px 0;
+      background: linear-gradient(90deg, transparent, rgba(124,92,255,.8), rgba(51,214,255,.8), rgba(0,255,168,.65), transparent);
+      opacity:.85;
+    }
+
+    /* ====== Sections ====== */
+    section{padding:22px 0}
+    .sectionHead{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:14px; margin-bottom:12px;
+    }
+    .sectionHead h2{margin:0; font-size:18px}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+
+    /* ====== Lists / Cards ====== */
+    .list{display:grid; gap:12px}
+    .item{
+      display:flex; justify-content:space-between; gap:12px;
+      padding:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+    }
+    .item .left{display:flex; flex-direction:column; gap:2px}
+    .item .right{text-align:right; display:flex; flex-direction:column; gap:2px}
+    .badge{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-size:12px; color:var(--muted);
+      width:fit-content;
+    }
+    .dot{width:8px; height:8px; border-radius:99px; background: var(--a1); box-shadow: 0 0 16px rgba(51,214,255,.6)}
+
+    .split{
+      display:grid; gap:16px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 900px){ .split{grid-template-columns:1fr} }
+
+    .members{
+      display:grid; gap:12px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 900px){ .members{grid-template-columns:1fr 1fr} }
+    @media (max-width: 560px){ .members{grid-template-columns:1fr} }
+
+    .member{
+      padding:14px; border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+      position:relative;
+      overflow:hidden;
+      min-height:120px;
+    }
+    .member:before{
+      content:"";
+      position:absolute; inset:-40px -40px auto auto;
+      width:140px; height:140px;
+      background: radial-gradient(circle at 30% 30%, rgba(51,214,255,.35), transparent 60%);
+      transform: rotate(18deg);
+    }
+    .member .name{font-weight:800}
+    .member .role{font-size:12px; color:var(--muted); margin-top:2px}
+    .member .meta{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
+    .tag{font-size:12px; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:6px 10px; background: rgba(255,255,255,.02)}
+
+    .footer{
+      padding:28px 0 42px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .kpi{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;
+    }
+    .kpi .tag{font-family:var(--mono)}
+    .toast{
+      position: fixed; right: 16px; bottom: 16px;
+      padding: 12px 14px; border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(10,14,25,.82);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      transform: translateY(20px);
+      opacity: 0; pointer-events:none;
+      transition: .25s ease;
+      max-width: 340px;
+    }
+    [data-theme="light"] .toast{ background: rgba(255,255,255,.86); }
+    .toast.show{opacity:1; transform: translateY(0); pointer-events:auto}
+  </style>
+</head>
+
+<body data-theme="dark">
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <div class="title">Orions Darts Club</div>
+        <div class="muted" style="font-size:12px">Practice • Precision • Orbit</div>
+      </div>
+    </div>
+
+    <nav class="navlinks" aria-label="primary">
+      <a href="#about">About</a>
+      <a href="#events">Events</a>
+      <a href="#members">Members</a>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#join">Join</a>
+    </nav>
+
+    <div class="actions">
+      <button class="iconbtn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+        <svg class="icon" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3v2m0 14v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M3 12h2m14 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+      </button>
+      <a class="btn" href="#join">
+        <span>Join a Session</span>
+        <span class="mono" style="opacity:.9">→</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="heroGrid">
+      <div class="card heroCard">
+        <span class="pill"><span class="dot"></span><span id="liveBadge">Next match in --:--</span></span>
+        <h1 class="h1">Aim true.<br/>Fly farther.</h1>
+        <p class="sub">
+          Orions Darts Club は、データと感覚を両立させる “モダンなダーツクラブ”。
+          練習ログ・イベント運営・ランキングを1ページで。今日からすぐに回せるダミーデータ入りテンプレです。
+        </p>
+        <div class="heroBtns">
+          <button class="btn" id="copyUrlBtn">Share this page</button>
+          <a class="btn secondary" href="#events">See upcoming events</a>
+        </div>
+
+        <div class="glowline"></div>
+
+        <div class="statRow" id="stats"></div>
+      </div>
+
+      <div class="card">
+        <div class="inner">
+          <div class="sectionHead">
+            <h2 class="title">Club Pulse</h2>
+            <div class="chips">
+              <span class="pill"><span class="mono" id="now"></span></span>
+              <span class="pill">Status: <b style="color:var(--text)">Open</b></span>
+            </div>
+          </div>
+          <div class="list" id="news"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About / Events split -->
+  <section id="about">
+    <div class="sectionHead">
+      <h2 class="title">About</h2>
+      <div class="chips">
+        <span class="pill">No backend</span>
+        <span class="pill">Vanilla JS</span>
+        <span class="pill">Responsive</span>
+        <span class="pill">Theme toggle</span>
+      </div>
+    </div>
+
+    <div class="split">
+      <div class="card">
+        <div class="inner">
+          <div class="badge"><span class="dot"></span> Philosophy</div>
+          <h3 style="margin:10px 0 6px">Practice that feels like play.</h3>
+          <p class="muted" style="margin:0">
+            1) ミニゲームで反復、2) 週次のライトなリーグ、3) 月例のトーナメント。
+            練習ログは “続けられる” 量に最適化。勝ち筋はデータで見える化。
+          </p>
+          <div class="kpi">
+            <span class="tag">Checkout Focus</span>
+            <span class="tag">Consistency</span>
+            <span class="tag">Fast Feedback</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="events">
+        <div class="inner">
+          <div class="sectionHead">
+            <h2 class="title">Upcoming Events</h2>
+            <a class="pill" href="#join">Join →</a>
+          </div>
+          <div class="list" id="eventList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Members -->
+  <section id="members">
+    <div class="sectionHead">
+      <h2 class="title">Member Spotlights</h2>
+      <div class="chips">
+        <span class="pill">Generated profiles</span>
+        <span class="pill">Skill tags</span>
+      </div>
+    </div>
+    <div class="members" id="memberGrid"></div>
+  </section>
+
+  <!-- Leaderboard -->
+  <section id="leaderboard">
+    <div class="sectionHead">
+      <h2 class="title">Leaderboard (Season Alpha)</h2>
+      <div class="chips">
+        <span class="pill">ELO-like</span>
+        <span class="pill">Last 30 days</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="inner">
+        <div class="list" id="rankList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Join -->
+  <section id="join">
+    <div class="card">
+      <div class="inner">
+        <div class="sectionHead">
+          <h2 class="title">Join Orions</h2>
+          <span class="pill">Copy / Customize / Deploy</span>
+        </div>
+        <p class="muted" style="margin-top:0">
+          このページは <span class="mono">index.html</span> 1枚で完結します。GitHub Pagesに置くだけで公開OK。
+          参加フォームが必要なら、Google Form 等へリンクするのが最短です（サーバー処理はGitHub Pagesでは扱いません）。 
+        </p>
+        <div class="heroBtns">
+          <button class="btn" id="toastBtn">Send a join request</button>
+          <a class="btn secondary" href="#about">Back to top</a>
+        </div>
+        <div class="glowline"></div>
+        <div class="muted" style="display:flex; gap:12px; flex-wrap:wrap">
+          <span class="pill">Tip: Replace dummy data in <span class="mono">DATA</span></span>
+          <span class="pill">Tip: Add pages as <span class="mono">about.html</span>, <span class="mono">contact.html</span></span>
+          <span class="pill">Tip: Add <span class="mono">assets/</span> for images</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <div class="wrap" style="padding:0">
+      <div>© <span id="year"></span> Orions Darts Club — Built for GitHub Pages.</div>
+      <div style="margin-top:6px">Made with HTML/CSS/JS only. No tracking, no ads.</div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <div style="font-weight:800">✅ Request drafted</div>
+  <div class="muted" style="margin-top:4px">実運用ではフォームURLに差し替えてください。</div>
+</div>
+
+<script>
+/* =========================
+   Dummy data generator
+   ========================= */
+const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const fmt = (d) => d.toLocaleString("ja-JP", { month:"2-digit", day:"2-digit", weekday:"short", hour:"2-digit", minute:"2-digit" });
+
+const DATA = (() => {
+  const roles = ["Captain", "Analyst", "Coach", "Sharpshooter", "Rookie", "Closer"];
+  const skills = ["Finisher", "Bull Hunter", "Consistency", "Tempo", "Mental", "Setup", "Checkout 60+", "T20 Focus"];
+  const venues = ["Studio Orion", "Nebula Lounge", "Arcade Nova", "Shooting Star Bar"];
+  const modes = ["301", "501", "Cricket", "Around the Clock", "Halve-It"];
+  const newsVerb = ["更新", "開催", "公開", "開始", "追加"];
+  const newsObj = ["リーグ表", "練習ログ", "新メンバー", "月例トーナメント", "チェックアウトチャレンジ"];
+
+  const members = Array.from({length: 6}).map((_, i) => {
+    const base = ["Astra","Lyra","Vega","Nova","Orion","Altair","Sirius","Rigel","Mira","Io"];
+    const name = base[i] + " " + ["K.","S.","M.","T.","R.","N."][i%6];
+    const tagCount = rand(2,3);
+    const tagSet = new Set();
+    while(tagSet.size < tagCount) tagSet.add(pick(skills));
+    return {
+      name,
+      role: pick(roles),
+      rating: rand(1420, 1780),
+      checkout: rand(28, 46) + "%",
+      specialty: pick(modes),
+      tags: Array.from(tagSet)
+    };
+  }).sort((a,b)=>b.rating-a.rating);
+
+  const now = new Date();
+  const events = Array.from({length: 4}).map((_, i) => {
+    const d = new Date(now.getTime() + (i+1)*24*60*60*1000 + rand(18, 120)*60*1000);
+    return {
+      title: ["Weekly League", "Checkout Clinic", "Open Practice", "Monthly Tournament"][i],
+      when: d,
+      venue: pick(venues),
+      mode: pick(modes),
+      slots: rand(8, 16),
+      fee: rand(0, 1200)
+    };
+  });
+
+  const news = Array.from({length: 4}).map((_, i) => {
+    const d = new Date(now.getTime() - rand(2, 72)*60*60*1000);
+    return {
+      title: `${pick(newsObj)} を${pick(newsVerb)}`,
+      when: d,
+      note: ["今週のベストスローを掲載。", "参加枠が少ないのでお早めに。", "次回はCricket強化回。", "新しい練習メニューを追加。"][i]
+    };
+  });
+
+  const stats = [
+    {big: members.length, lbl: "Active members"},
+    {big: events.length, lbl: "Events scheduled"},
+    {big: rand(120, 260), lbl: "Throws logged / week"},
+    {big: rand(18, 35) + "%", lbl: "Avg checkout rate"}
+  ];
+
+  return { members, events, news, stats };
+})();
+
+/* =========================
+   Render helpers
+   ========================= */
+const el = (tag, cls) => {
+  const x = document.createElement(tag);
+  if(cls) x.className = cls;
+  return x;
+};
+
+function renderStats(){
+  const root = document.getElementById("stats");
+  root.innerHTML = "";
+  DATA.stats.forEach(s => {
+    const box = el("div","stat");
+    box.innerHTML = `<div class="big">${s.big}</div><div class="lbl">${s.lbl}</div>`;
+    root.appendChild(box);
+  });
+}
+
+function renderNews(){
+  const root = document.getElementById("news");
+  root.innerHTML = "";
+  DATA.news.forEach(n => {
+    const row = el("div","item");
+    row.innerHTML = `
+      <div class="left">
+        <div style="font-weight:800">${n.title}</div>
+        <div class="muted" style="font-size:12px">${n.note}</div>
+      </div>
+      <div class="right">
+        <div class="mono" style="font-size:12px">${fmt(n.when)}</div>
+        <div class="badge" style="margin-left:auto"><span class="dot" style="background:var(--a2)"></span> Update</div>
+      </div>
+    `;
+    root.appendChild(row);
+  });
+}
+
+function renderEvents(){
+  const root = document.getElementById("eventList");
+  root.innerHTML = "";
+  DATA.events.forEach(e => {
+    const row = el("div","item");
+    row.innerHTML = `
+      <div class="left">
+        <div style="font-weight:900">${e.title}</div>
+        <div class="muted" style="font-size:12px">${e.venue} • ${e.mode}</div>
+      </div>
+      <div class="right">
+        <div class="mono" style="font-size:12px">${fmt(e.when)}</div>
+        <div class="muted" style="font-size:12px">${e.slots} slots • ¥${e.fee}</div>
+      </div>
+    `;
+    root.appendChild(row);
+  });
+}
+
+function renderMembers(){
+  const root = document.getElementById("memberGrid");
+  root.innerHTML = "";
+  DATA.members.slice(0,6).forEach(m => {
+    const card = el("div","member");
+    const tags = m.tags.map(t => `<span class="tag">${t}</span>`).join("");
+    card.innerHTML = `
+      <div class="name">${m.name}</div>
+      <div class="role">${m.role} • Specialty: <b style="color:var(--text)">${m.specialty}</b></div>
+      <div class="meta">${tags}</div>
+      <div class="glowline" style="margin:10px 0 8px; opacity:.55"></div>
+      <div class="muted" style="display:flex; justify-content:space-between; font-size:12px">
+        <span>Rating <b style="color:var(--text)">${m.rating}</b></span>
+        <span>Checkout <b style="color:var(--text)">${m.checkout}</b></span>
+      </div>
+    `;
+    root.appendChild(card);
+  });
+}
+
+function renderRank(){
+  const root = document.getElementById("rankList");
+  root.innerHTML = "";
+  DATA.members.forEach((m, idx) => {
+    const row = el("div","item");
+    const medal = idx===0 ? "👑" : idx===1 ? "🥈" : idx===2 ? "🥉" : "•";
+    row.innerHTML = `
+      <div class="left">
+        <div style="font-weight:900">${medal} #${idx+1} ${m.name}</div>
+        <div class="muted" style="font-size:12px">${m.role} • ${m.specialty}</div>
+      </div>
+      <div class="right">
+        <div class="mono" style="font-size:12px">Rating ${m.rating}</div>
+        <div class="muted" style="font-size:12px">Checkout ${m.checkout}</div>
+      </div>
+    `;
+    root.appendChild(row);
+  });
+}
+
+function initClock(){
+  const nowEl = document.getElementById("now");
+  const tick = () => nowEl.textContent = new Date().toLocaleString("ja-JP");
+  tick(); setInterval(tick, 1000);
+}
+
+function initCountdown(){
+  const badge = document.getElementById("liveBadge");
+  const next = DATA.events[0].when;
+  const tick = () => {
+    const ms = next - new Date();
+    if(ms <= 0){ badge.textContent = "Now live: Open practice"; return; }
+    const m = Math.floor(ms/60000), s = Math.floor((ms%60000)/1000);
+    badge.textContent = `Next match in ${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  };
+  tick(); setInterval(tick, 1000);
+}
+
+function initTheme(){
+  const btn = document.getElementById("themeBtn");
+  const body = document.body;
+  const saved = localStorage.getItem("odc_theme");
+  if(saved) body.setAttribute("data-theme", saved);
+
+  btn.addEventListener("click", () => {
+    const cur = body.getAttribute("data-theme") || "dark";
+    const next = cur === "dark" ? "light" : "dark";
+    body.setAttribute("data-theme", next);
+    localStorage.setItem("odc_theme", next);
+  });
+}
+
+function initShare(){
+  const btn = document.getElementById("copyUrlBtn");
+  btn.addEventListener("click", async () => {
+    const url = location.href;
+    try{
+      await navigator.clipboard.writeText(url);
+      toast(`リンクをコピーしました`);
+    }catch{
+      toast(`コピーできませんでした（権限/ブラウザ制限）`);
+    }
+  });
+}
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.querySelector(".muted").textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2400);
+}
+
+function initJoin(){
+  document.getElementById("toastBtn").addEventListener("click", () => {
+    toast("参加申請（仮）を作成しました：フォームURLに差し替えて運用してください。");
+  });
+}
+
+/* Boot */
+document.getElementById("year").textContent = new Date().getFullYear();
+renderStats();
+renderNews();
+renderEvents();
+renderMembers();
+renderRank();
+initClock();
+initCountdown();
+initTheme();
+initShare();
+initJoin();
+</script>
+</body>
+</html>
