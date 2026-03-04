@@ -312,7 +312,7 @@
       border-radius:16px;
       position:relative;
       overflow:hidden;
-      min-height:120px;
+      min-height:140px;
     }
     .member:before{
       content:"";
@@ -321,6 +321,41 @@
       background: radial-gradient(circle at 30% 30%, rgba(51,214,255,.22), transparent 60%);
       transform: rotate(18deg);
     }
+    .memberHead{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      position:relative;
+      z-index:1;
+    }
+    .avatar{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.05);
+      object-fit:cover;
+      box-shadow: 0 18px 48px rgba(0,0,0,.35);
+      flex:0 0 auto;
+    }
+    .avatarFallback{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      color: rgba(238,243,255,.92);
+      box-shadow: 0 18px 48px rgba(0,0,0,.35);
+      flex:0 0 auto;
+    }
+    [data-theme="light"] .avatarFallback{
+      color: rgba(14,19,32,.90);
+      border-color: rgba(0,0,0,.10);
+    }
+
     .member .name{font-weight:800}
     .member .role{font-size:12px; color:var(--muted); margin-top:2px}
     .member .meta{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
@@ -345,7 +380,8 @@
       transform: translateY(20px);
       opacity: 0; pointer-events:none;
       transition: .25s ease;
-      max-width: 340px;
+      max-width: 380px;
+      white-space: pre-wrap;
     }
     [data-theme="light"] .toast{ background: rgba(255,255,255,.86); }
     .toast.show{opacity:1; transform: translateY(0); pointer-events:auto}
@@ -358,6 +394,15 @@
       background: rgba(255,255,255,.03);
       color: var(--muted);
       font-size: 12px;
+      white-space: pre-wrap;
+    }
+    code.inline{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
     }
   </style>
 </head>
@@ -405,7 +450,7 @@
         <h1 class="h1">Aim true.<br/>Fly farther.</h1>
         <p class="sub">
           Orions Darts Club は、データと感覚を両立させる “モダンなダーツクラブ”。<br/>
-          このページは <span class="mono">data/club-data.json</span> を読み込んで表示します（ダミー生成なし）。
+          このページは <code class="inline">data/club-data.json</code> を読み込んで表示します（ダミー生成なし）。
         </p>
         <div class="heroBtns">
           <button class="btn" id="copyUrlBtn">Share this page</button>
@@ -512,7 +557,7 @@
           <span class="pill">Copy / Customize / Deploy</span>
         </div>
         <p class="muted" style="margin-top:0">
-          このページは <span class="mono">index.html</span> 1枚＋ <span class="mono">data/club-data.json</span> で完結します。GitHub Pagesに置くだけで公開OK。<br/>
+          このページは <code class="inline">index.html</code> 1枚＋ <code class="inline">data/club-data.json</code> で完結します。GitHub Pagesに置くだけで公開OK。<br/>
           参加フォームが必要なら、Google Form 等へリンクするのが最短です（サーバー処理はGitHub Pagesでは扱いません）。
         </p>
         <div class="heroBtns">
@@ -533,6 +578,9 @@
     <div class="wrap" style="padding:0">
       <div>© <span id="year"></span> <span id="clubNameFooter">Orions Darts Club</span> — Built for GitHub Pages.</div>
       <div style="margin-top:6px">Made with HTML/CSS/JS only. No tracking, no ads.</div>
+      <div style="margin-top:10px" class="muted">
+        Data source: <span class="mono" id="dataUrlEcho"></span>
+      </div>
     </div>
   </div>
 </main>
@@ -544,10 +592,37 @@
 
 <script>
 /* =========================
-   Data loading (JSON file)
+   GitHub Pages-safe paths
    ========================= */
-const DATA_URL = "./data/club-data.json";
 
+/**
+ * siteRoot:
+ * - User/Org Pages:  https://username.github.io/         -> "/"
+ * - Project Pages:   https://username.github.io/repo/    -> "/repo/"
+ *
+ * This avoids "./data/..." breaking when the site is deployed under a repo path.
+ */
+const siteRoot = (() => {
+  const parts = location.pathname.split("/").filter(Boolean);
+  // If first segment doesn't include dot, it's likely repo name (project pages)
+  const isProject = parts.length >= 1 && !parts[0].includes(".");
+  return isProject ? `/${parts[0]}/` : `/`;
+})();
+
+/**
+ * Data URL (absolute from origin + siteRoot)
+ */
+const DATA_URL = `${siteRoot}data/club-data.json`;
+
+// Echo for UI debug
+document.addEventListener("DOMContentLoaded", () => {
+  const echo = document.getElementById("dataUrlEcho");
+  if (echo) echo.textContent = DATA_URL;
+});
+
+/* =========================
+   Formatting
+   ========================= */
 const fmt = (d) =>
   d.toLocaleString("ja-JP", {
     month: "2-digit",
@@ -557,6 +632,9 @@ const fmt = (d) =>
     minute: "2-digit",
   });
 
+/* =========================
+   Data normalization
+   ========================= */
 function normalizeData(raw) {
   const toDate = (x) => (x instanceof Date ? x : new Date(x));
 
@@ -573,6 +651,38 @@ function normalizeData(raw) {
   news.sort((a, b) => b.when - a.when);
   members.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
 
+  // Avatar path normalization:
+  // Accept:
+  // - "./assets/..."
+  // - "assets/..."
+  // - "/assets/..." (we will convert to siteRoot + "assets/...")
+  // - "/repo/assets/..." (kept as-is)
+  // - "https://..."
+  const origin = location.origin;
+  const base = new URL(siteRoot, origin); // https://origin/<repo>/ or https://origin/
+  members.forEach((m) => {
+    if (!m || !m.avatar) return;
+    const a = String(m.avatar).trim();
+    // absolute URL => keep
+    if (/^https?:\/\//i.test(a)) {
+      m.avatar = a;
+      return;
+    }
+    // If it starts with "/assets/..." -> treat as siteRoot + "assets/..."
+    if (a.startsWith("/assets/")) {
+      m.avatar = new URL(a.slice(1), base).toString(); // remove leading "/"
+      return;
+    }
+    // If it starts with "/" (maybe already includes repo), keep as absolute from origin
+    if (a.startsWith("/")) {
+      m.avatar = new URL(a, origin).toString();
+      return;
+    }
+    // "./assets/..." or "assets/..." => relative to siteRoot
+    const cleaned = a.replace(/^\.\//, "");
+    m.avatar = new URL(cleaned, base).toString();
+  });
+
   return {
     club: raw.club || {},
     members,
@@ -582,11 +692,22 @@ function normalizeData(raw) {
   };
 }
 
+/* =========================
+   Data loading (JSON file)
+   ========================= */
 async function loadData() {
   // cache busting for GitHub Pages / CDN
   const url = `${DATA_URL}?v=${Date.now()}`;
   const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Failed to load data: ${res.status}`);
+
+  if (!res.ok) {
+    // Read a bit of body to help debug common 404->HTML issues
+    const text = await res.text().catch(() => "");
+    throw new Error(
+      `Failed to load data\nstatus: ${res.status}\nurl: ${url}\nbody(head): ${text.slice(0, 120)}`
+    );
+  }
+
   const raw = await res.json();
   return normalizeData(raw);
 }
@@ -622,7 +743,8 @@ function renderStats() {
   root.innerHTML = "";
   (DATA.stats || []).forEach((s) => {
     const box = el("div", "stat");
-    box.innerHTML = `<div class="big">${s.big}</div><div class="lbl">${s.lbl}</div>`;
+    const unit = (s.unit ?? "");
+    box.innerHTML = `<div class="big">${s.big}${unit}</div><div class="lbl">${s.lbl ?? ""}</div>`;
     root.appendChild(box);
   });
 }
@@ -634,11 +756,11 @@ function renderNews() {
     const row = el("div", "item");
     row.innerHTML = `
       <div class="left">
-        <div style="font-weight:800">${n.title}</div>
-        <div class="muted" style="font-size:12px">${n.note || ""}</div>
+        <div style="font-weight:800">${escapeHtml(n.title ?? "")}</div>
+        <div class="muted" style="font-size:12px">${escapeHtml(n.note ?? "")}</div>
       </div>
       <div class="right">
-        <div class="mono" style="font-size:12px">${fmt(n.when)}</div>
+        <div class="mono" style="font-size:12px">${isValidDate(n.when) ? fmt(n.when) : ""}</div>
         <div class="badge" style="margin-left:auto"><span class="dot" style="background:var(--led-g)"></span> Update</div>
       </div>
     `;
@@ -653,12 +775,12 @@ function renderEvents() {
     const row = el("div", "item");
     row.innerHTML = `
       <div class="left">
-        <div style="font-weight:900">${e.title}</div>
-        <div class="muted" style="font-size:12px">${e.venue} • ${e.mode}</div>
+        <div style="font-weight:900">${escapeHtml(e.title ?? "")}</div>
+        <div class="muted" style="font-size:12px">${escapeHtml(e.venue ?? "")} • ${escapeHtml(e.mode ?? "")}</div>
       </div>
       <div class="right">
-        <div class="mono" style="font-size:12px">${fmt(e.when)}</div>
-        <div class="muted" style="font-size:12px">${e.slots} slots • ¥${e.fee}</div>
+        <div class="mono" style="font-size:12px">${isValidDate(e.when) ? fmt(e.when) : ""}</div>
+        <div class="muted" style="font-size:12px">${Number(e.slots ?? 0)} slots • ¥${Number(e.fee ?? 0)}</div>
       </div>
     `;
     root.appendChild(row);
@@ -668,19 +790,59 @@ function renderEvents() {
 function renderMembers() {
   const root = document.getElementById("memberGrid");
   root.innerHTML = "";
+
   (DATA.members || []).slice(0, 6).forEach((m) => {
     const card = el("div", "member");
-    const tags = (m.tags || []).map((t) => `<span class="tag">${t}</span>`).join("");
-    card.innerHTML = `
-      <div class="name">${m.name}</div>
-      <div class="role">${m.role} • Specialty: <b style="color:var(--text)">${m.specialty}</b></div>
-      <div class="meta">${tags}</div>
-      <div class="glowline" style="margin:10px 0 8px; opacity:.55"></div>
-      <div class="muted" style="display:flex; justify-content:space-between; font-size:12px">
-        <span>Rating <b style="color:var(--text)">${m.rating}</b></span>
-        <span>Checkout <b style="color:var(--text)">${m.checkout}</b></span>
-      </div>
+    const tags = (m.tags || []).map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join("");
+
+    // avatar element with fallback to initials
+    const head = el("div", "memberHead");
+    const left = el("div", "");
+    left.style.minWidth = "0";
+
+    if (m.avatar) {
+      const img = el("img", "avatar");
+      img.alt = `${m.name ?? "member"} avatar`;
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.referrerPolicy = "no-referrer";
+      img.src = m.avatar;
+      img.onerror = () => {
+        // replace with fallback initials
+        img.replaceWith(makeAvatarFallback(m.name));
+      };
+      head.appendChild(img);
+    } else {
+      head.appendChild(makeAvatarFallback(m.name));
+    }
+
+    left.innerHTML = `
+      <div class="name">${escapeHtml(m.name ?? "")}</div>
+      <div class="role">${escapeHtml(m.role ?? "")} • Specialty: <b style="color:var(--text)">${escapeHtml(m.specialty ?? "")}</b></div>
     `;
+    head.appendChild(left);
+
+    card.appendChild(head);
+
+    const meta = el("div", "meta");
+    meta.innerHTML = tags;
+    card.appendChild(meta);
+
+    const line = el("div", "glowline");
+    line.style.margin = "10px 0 8px";
+    line.style.opacity = ".55";
+    card.appendChild(line);
+
+    const bottom = el("div", "muted");
+    bottom.style.display = "flex";
+    bottom.style.justifyContent = "space-between";
+    bottom.style.fontSize = "12px";
+    bottom.innerHTML = `
+      <span>Rating <b style="color:var(--text)">${escapeHtml(String(m.rating ?? ""))}</b></span>
+      <span>Checkout <b style="color:var(--text)">${escapeHtml(String(m.checkout ?? ""))}</b></span>
+    `;
+    card.appendChild(bottom);
+
     root.appendChild(card);
   });
 }
@@ -688,17 +850,18 @@ function renderMembers() {
 function renderRank() {
   const root = document.getElementById("rankList");
   root.innerHTML = "";
+
   (DATA.members || []).forEach((m, idx) => {
     const row = el("div", "item");
     const medal = idx === 0 ? "👑" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : "•";
     row.innerHTML = `
       <div class="left">
-        <div style="font-weight:900">${medal} #${idx + 1} ${m.name}</div>
-        <div class="muted" style="font-size:12px">${m.role} • ${m.specialty}</div>
+        <div style="font-weight:900">${medal} #${idx + 1} ${escapeHtml(m.name ?? "")}</div>
+        <div class="muted" style="font-size:12px">${escapeHtml(m.role ?? "")} • ${escapeHtml(m.specialty ?? "")}</div>
       </div>
       <div class="right">
-        <div class="mono" style="font-size:12px">Rating ${m.rating}</div>
-        <div class="muted" style="font-size:12px">Checkout ${m.checkout}</div>
+        <div class="mono" style="font-size:12px">Rating ${escapeHtml(String(m.rating ?? ""))}</div>
+        <div class="muted" style="font-size:12px">Checkout ${escapeHtml(String(m.checkout ?? ""))}</div>
       </div>
     `;
     root.appendChild(row);
@@ -714,16 +877,16 @@ function initClock() {
 
 function initCountdown() {
   const badge = document.getElementById("liveBadge");
-  const next = (DATA.events && DATA.events[0] && DATA.events[0].when) ? DATA.events[0].when : null;
+  const nextEvent = (DATA.events && DATA.events[0] && DATA.events[0].when) ? DATA.events[0] : null;
 
   const tick = () => {
-    if (!next) {
+    if (!nextEvent || !isValidDate(nextEvent.when)) {
       badge.textContent = "No upcoming events";
       return;
     }
-    const ms = next - new Date();
+    const ms = nextEvent.when - new Date();
     if (ms <= 0) {
-      badge.textContent = "Now live: Open practice";
+      badge.textContent = `Now live: ${nextEvent.title ?? "Event"}`;
       return;
     }
     const m = Math.floor(ms / 60000);
@@ -780,6 +943,33 @@ function showDataError(msg){
   box.textContent = msg;
 }
 
+/* ===== Helpers ===== */
+function isValidDate(d){
+  return d instanceof Date && !isNaN(d.getTime());
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function makeAvatarFallback(name){
+  const x = el("div", "avatarFallback");
+  const s = (name || "?").trim();
+  // initials: take first letter of each word, max 2 chars
+  const parts = s.split(/\s+/).filter(Boolean);
+  const initials = parts.length >= 2
+    ? (parts[0][0] + parts[1][0])
+    : (parts[0]?.[0] ?? "?");
+  x.textContent = initials.toUpperCase();
+  x.title = s;
+  return x;
+}
+
 /* Boot (async) */
 (async function boot() {
   document.getElementById("year").textContent = new Date().getFullYear();
@@ -790,7 +980,23 @@ function showDataError(msg){
   } catch (e) {
     console.error(e);
     toast("データ読み込みに失敗しました：data/club-data.json を確認してください。");
-    showDataError("⚠ データ読み込み失敗： ./data/club-data.json が存在するか、JSON文法が正しいか確認してください（ローカルはLive Server推奨）。");
+
+    const hint = [
+      "⚠ データ読み込み失敗",
+      `siteRoot: ${siteRoot}`,
+      `DATA_URL: ${DATA_URL}`,
+      "",
+      "確認ポイント:",
+      "1) GitHub上で /data/club-data.json が存在するか（コミット済みか）",
+      "2) Pagesの公開フォルダが root か docs か（docsなら docs/data/ に置く）",
+      "3) ブラウザで直接開けるか: <your pages url>/data/club-data.json",
+      "",
+      "Console には詳細エラーを出しています（F12 > Console）。"
+    ].join("\n");
+
+    showDataError(hint);
+
+    // Safe fallback (empty UI)
     DATA = { club:{}, members: [], events: [], news: [], stats: [] };
   }
 
