@@ -7,51 +7,108 @@
   <meta name="description" content="Orions Darts Club — Practice. Precision. Orbit." />
   <meta property="og:title" content="Orions Darts Club" />
   <meta property="og:description" content="Practice. Precision. Orbit." />
-  <meta name="theme-color" content="#0b1220" />
+  <meta name="theme-color" content="#070712" />
 
   <style>
     /* ====== Base / Theme ====== */
     :root{
-      --bg0:#070a12; --bg1:#0b1220; --card:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.12); --text:#eaf2ff; --muted:rgba(234,242,255,.72);
-      --a0:#7c5cff; --a1:#33d6ff; --a2:#00ffa8;
-      --shadow: 0 20px 70px rgba(0,0,0,.45);
+      /* LED Tower PC theme */
+      --bg0:#030306;
+      --bg1:#070712;
+      --card:rgba(255,255,255,.055);
+      --line:rgba(255,255,255,.12);
+      --text:#eef3ff;
+      --muted:rgba(238,243,255,.72);
+
+      /* Rainbow LED stops */
+      --led-r:#ff2d55;
+      --led-o:#ff9500;
+      --led-y:#ffd60a;
+      --led-g:#00ffa8;
+      --led-c:#33d6ff;
+      --led-b:#2f6bff;
+      --led-p:#b45cff;
+
+      --led-grad: linear-gradient(
+        90deg,
+        var(--led-r),
+        var(--led-o),
+        var(--led-y),
+        var(--led-g),
+        var(--led-c),
+        var(--led-b),
+        var(--led-p),
+        var(--led-r)
+      );
+
+      --shadow: 0 22px 80px rgba(0,0,0,.55);
       --radius: 18px;
       --max: 1100px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
+
     [data-theme="light"]{
-      --bg0:#f6f8ff; --bg1:#ffffff; --card:rgba(0,0,0,.045);
-      --line:rgba(0,0,0,.10); --text:#0e1320; --muted:rgba(14,19,32,.72);
+      /* light mode keeps readability, with gentle LED accents */
+      --bg0:#f6f8ff;
+      --bg1:#ffffff;
+      --card:rgba(0,0,0,.045);
+      --line:rgba(0,0,0,.10);
+      --text:#0e1320;
+      --muted:rgba(14,19,32,.72);
       --shadow: 0 20px 70px rgba(0,0,0,.12);
+    }
+
+    @keyframes ledShift {
+      0%{ filter:hue-rotate(0deg); }
+      100%{ filter:hue-rotate(360deg); }
     }
 
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
+
     body{
       margin:0; color:var(--text);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+
+      /* Background: deeper black + subtle rainbow bloom */
       background:
-        radial-gradient(1200px 700px at 20% -10%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(900px 600px at 95% 10%, rgba(51,214,255,.28), transparent 55%),
-        radial-gradient(900px 600px at 70% 100%, rgba(0,255,168,.22), transparent 55%),
+        radial-gradient(900px 600px at 18% -10%, rgba(255,45,85,.18), transparent 60%),
+        radial-gradient(900px 600px at 95% 12%, rgba(51,214,255,.16), transparent 55%),
+        radial-gradient(900px 600px at 70% 100%, rgba(0,255,168,.14), transparent 55%),
+        radial-gradient(500px 500px at 50% 40%, rgba(180,92,255,.10), transparent 60%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
+
       min-height:100vh;
       overflow-x:hidden;
     }
+
     a{color:inherit; text-decoration:none}
     .wrap{max-width:var(--max); margin:0 auto; padding:0 20px}
     .grid{display:grid; gap:16px}
+
     .btn{
       display:inline-flex; align-items:center; gap:10px;
       padding:12px 14px; border-radius:12px;
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(51,214,255,.9));
+      background: var(--led-grad);
       color:white; font-weight:650; border:0; cursor:pointer;
-      box-shadow: 0 12px 30px rgba(124,92,255,.20);
+      box-shadow: 0 14px 36px rgba(0,0,0,.35);
       transition: transform .15s ease, filter .2s ease;
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .btn::after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: var(--led-grad);
+      opacity:.35;
+      filter: blur(18px);
+      animation: ledShift 6s linear infinite;
+      z-index:-1;
     }
     .btn:hover{transform: translateY(-1px); filter:saturate(1.05)}
     .btn:active{transform: translateY(0px)}
+
     .btn.secondary{
       background: transparent; color:var(--text);
       border:1px solid var(--line); box-shadow:none;
@@ -70,8 +127,20 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       backdrop-filter: blur(14px);
+      position:relative;
+      overflow:hidden;
     }
-    .card .inner{padding:18px}
+    .card::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background: var(--led-grad);
+      opacity:.06;
+      filter: blur(22px);
+      transform: rotate(18deg);
+      animation: ledShift 10s linear infinite;
+      pointer-events:none;
+    }
+    .card .inner{padding:18px; position:relative}
     .title{letter-spacing:.2px}
     .muted{color:var(--muted)}
     .mono{font-family:var(--mono)}
@@ -80,8 +149,8 @@
     header{
       position:sticky; top:0; z-index:50;
       backdrop-filter: blur(18px);
-      background: linear-gradient(180deg, rgba(10,14,25,.78), rgba(10,14,25,.35));
-      border-bottom:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(0,0,0,.72), rgba(0,0,0,.28));
+      border-bottom:1px solid rgba(255,255,255,.10);
     }
     [data-theme="light"] header{
       background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.52));
@@ -95,20 +164,41 @@
       display:flex; align-items:center; gap:12px;
       font-weight:800;
     }
+
+    /* Logo -> tower PC with rainbow LED strip */
     .logo{
-      width:34px; height:34px; border-radius:12px;
-      background: radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.92), rgba(255,255,255,.2)),
-                  linear-gradient(135deg, rgba(124,92,255,1), rgba(51,214,255,1));
-      box-shadow: 0 16px 40px rgba(124,92,255,.22);
+      width:34px; height:34px;
+      border-radius:10px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02)),
+        linear-gradient(180deg, rgba(20,22,30,.95), rgba(10,10,16,.95));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 18px 48px rgba(0,0,0,.55);
       position:relative;
     }
-    .logo:after{
+    .logo::before{
+      /* side LED strip */
       content:"";
-      position:absolute; inset:8px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.35);
-      transform: rotate(15deg);
+      position:absolute;
+      top:4px; bottom:4px; right:5px;
+      width:5px;
+      border-radius:999px;
+      background: var(--led-grad);
+      filter: blur(.2px);
+      animation: ledShift 5s linear infinite;
+      box-shadow: 0 0 18px rgba(51,214,255,.35), 0 0 24px rgba(180,92,255,.22);
     }
+    .logo::after{
+      /* power button */
+      content:"";
+      position:absolute;
+      left:8px; bottom:7px;
+      width:9px; height:9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow: 0 0 10px rgba(0,255,168,.22);
+    }
+
     .navlinks{
       display:flex; gap:14px; align-items:center;
     }
@@ -140,7 +230,7 @@
       .heroGrid{grid-template-columns:1fr}
       .navlinks{display:none}
     }
-    .heroCard{padding:26px}
+    .heroCard{padding:26px; position:relative}
     .h1{
       font-size: clamp(30px, 4.2vw, 54px);
       line-height:1.05;
@@ -165,7 +255,7 @@
     .stat .lbl{font-size:12px; color:var(--muted)}
     .glowline{
       height:1px; margin:18px 0;
-      background: linear-gradient(90deg, transparent, rgba(124,92,255,.8), rgba(51,214,255,.8), rgba(0,255,168,.65), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,45,85,.75), rgba(255,214,10,.75), rgba(0,255,168,.70), rgba(51,214,255,.75), rgba(180,92,255,.75), transparent);
       opacity:.85;
     }
 
@@ -197,7 +287,11 @@
       font-size:12px; color:var(--muted);
       width:fit-content;
     }
-    .dot{width:8px; height:8px; border-radius:99px; background: var(--a1); box-shadow: 0 0 16px rgba(51,214,255,.6)}
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--led-c);
+      box-shadow: 0 0 18px rgba(51,214,255,.55);
+    }
 
     .split{
       display:grid; gap:16px;
@@ -224,7 +318,7 @@
       content:"";
       position:absolute; inset:-40px -40px auto auto;
       width:140px; height:140px;
-      background: radial-gradient(circle at 30% 30%, rgba(51,214,255,.35), transparent 60%);
+      background: radial-gradient(circle at 30% 30%, rgba(51,214,255,.22), transparent 60%);
       transform: rotate(18deg);
     }
     .member .name{font-weight:800}
@@ -255,6 +349,16 @@
     }
     [data-theme="light"] .toast{ background: rgba(255,255,255,.86); }
     .toast.show{opacity:1; transform: translateY(0); pointer-events:auto}
+
+    /* small helper */
+    .errorLine{
+      border:1px dashed rgba(255,255,255,.20);
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 12px;
+    }
   </style>
 </head>
 
@@ -264,8 +368,8 @@
     <div class="brand">
       <div class="logo" aria-hidden="true"></div>
       <div>
-        <div class="title">Orions Darts Club</div>
-        <div class="muted" style="font-size:12px">Practice • Precision • Orbit</div>
+        <div class="title" id="clubName">Orions Darts Club</div>
+        <div class="muted" id="clubTagline" style="font-size:12px">Practice • Precision • Orbit</div>
       </div>
     </div>
 
@@ -300,8 +404,8 @@
         <span class="pill"><span class="dot"></span><span id="liveBadge">Next match in --:--</span></span>
         <h1 class="h1">Aim true.<br/>Fly farther.</h1>
         <p class="sub">
-          Orions Darts Club は、データと感覚を両立させる “モダンなダーツクラブ”。
-          練習ログ・イベント運営・ランキングを1ページで。今日からすぐに回せるダミーデータ入りテンプレです。
+          Orions Darts Club は、データと感覚を両立させる “モダンなダーツクラブ”。<br/>
+          このページは <span class="mono">data/club-data.json</span> を読み込んで表示します（ダミー生成なし）。
         </p>
         <div class="heroBtns">
           <button class="btn" id="copyUrlBtn">Share this page</button>
@@ -311,6 +415,7 @@
         <div class="glowline"></div>
 
         <div class="statRow" id="stats"></div>
+        <div id="dataError" style="margin-top:12px; display:none;" class="errorLine"></div>
       </div>
 
       <div class="card">
@@ -319,7 +424,7 @@
             <h2 class="title">Club Pulse</h2>
             <div class="chips">
               <span class="pill"><span class="mono" id="now"></span></span>
-              <span class="pill">Status: <b style="color:var(--text)">Open</b></span>
+              <span class="pill">Status: <b style="color:var(--text)" id="clubStatus">Open</b></span>
             </div>
           </div>
           <div class="list" id="news"></div>
@@ -346,7 +451,7 @@
           <div class="badge"><span class="dot"></span> Philosophy</div>
           <h3 style="margin:10px 0 6px">Practice that feels like play.</h3>
           <p class="muted" style="margin:0">
-            1) ミニゲームで反復、2) 週次のライトなリーグ、3) 月例のトーナメント。
+            1) ミニゲームで反復、2) 週次のライトなリーグ、3) 月例のトーナメント。<br/>
             練習ログは “続けられる” 量に最適化。勝ち筋はデータで見える化。
           </p>
           <div class="kpi">
@@ -374,7 +479,7 @@
     <div class="sectionHead">
       <h2 class="title">Member Spotlights</h2>
       <div class="chips">
-        <span class="pill">Generated profiles</span>
+        <span class="pill">Profiles from JSON</span>
         <span class="pill">Skill tags</span>
       </div>
     </div>
@@ -407,8 +512,8 @@
           <span class="pill">Copy / Customize / Deploy</span>
         </div>
         <p class="muted" style="margin-top:0">
-          このページは <span class="mono">index.html</span> 1枚で完結します。GitHub Pagesに置くだけで公開OK。
-          参加フォームが必要なら、Google Form 等へリンクするのが最短です（サーバー処理はGitHub Pagesでは扱いません）。 
+          このページは <span class="mono">index.html</span> 1枚＋ <span class="mono">data/club-data.json</span> で完結します。GitHub Pagesに置くだけで公開OK。<br/>
+          参加フォームが必要なら、Google Form 等へリンクするのが最短です（サーバー処理はGitHub Pagesでは扱いません）。
         </p>
         <div class="heroBtns">
           <button class="btn" id="toastBtn">Send a join request</button>
@@ -416,7 +521,7 @@
         </div>
         <div class="glowline"></div>
         <div class="muted" style="display:flex; gap:12px; flex-wrap:wrap">
-          <span class="pill">Tip: Replace dummy data in <span class="mono">DATA</span></span>
+          <span class="pill">Tip: Update data in <span class="mono">data/club-data.json</span></span>
           <span class="pill">Tip: Add pages as <span class="mono">about.html</span>, <span class="mono">contact.html</span></span>
           <span class="pill">Tip: Add <span class="mono">assets/</span> for images</span>
         </div>
@@ -426,7 +531,7 @@
 
   <div class="footer">
     <div class="wrap" style="padding:0">
-      <div>© <span id="year"></span> Orions Darts Club — Built for GitHub Pages.</div>
+      <div>© <span id="year"></span> <span id="clubNameFooter">Orions Darts Club</span> — Built for GitHub Pages.</div>
       <div style="margin-top:6px">Made with HTML/CSS/JS only. No tracking, no ads.</div>
     </div>
   </div>
@@ -439,111 +544,113 @@
 
 <script>
 /* =========================
-   Dummy data generator
+   Data loading (JSON file)
    ========================= */
-const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const fmt = (d) => d.toLocaleString("ja-JP", { month:"2-digit", day:"2-digit", weekday:"short", hour:"2-digit", minute:"2-digit" });
+const DATA_URL = "./data/club-data.json";
 
-const DATA = (() => {
-  const roles = ["Captain", "Analyst", "Coach", "Sharpshooter", "Rookie", "Closer"];
-  const skills = ["Finisher", "Bull Hunter", "Consistency", "Tempo", "Mental", "Setup", "Checkout 60+", "T20 Focus"];
-  const venues = ["Studio Orion", "Nebula Lounge", "Arcade Nova", "Shooting Star Bar"];
-  const modes = ["301", "501", "Cricket", "Around the Clock", "Halve-It"];
-  const newsVerb = ["更新", "開催", "公開", "開始", "追加"];
-  const newsObj = ["リーグ表", "練習ログ", "新メンバー", "月例トーナメント", "チェックアウトチャレンジ"];
-
-  const members = Array.from({length: 6}).map((_, i) => {
-    const base = ["Astra","Lyra","Vega","Nova","Orion","Altair","Sirius","Rigel","Mira","Io"];
-    const name = base[i] + " " + ["K.","S.","M.","T.","R.","N."][i%6];
-    const tagCount = rand(2,3);
-    const tagSet = new Set();
-    while(tagSet.size < tagCount) tagSet.add(pick(skills));
-    return {
-      name,
-      role: pick(roles),
-      rating: rand(1420, 1780),
-      checkout: rand(28, 46) + "%",
-      specialty: pick(modes),
-      tags: Array.from(tagSet)
-    };
-  }).sort((a,b)=>b.rating-a.rating);
-
-  const now = new Date();
-  const events = Array.from({length: 4}).map((_, i) => {
-    const d = new Date(now.getTime() + (i+1)*24*60*60*1000 + rand(18, 120)*60*1000);
-    return {
-      title: ["Weekly League", "Checkout Clinic", "Open Practice", "Monthly Tournament"][i],
-      when: d,
-      venue: pick(venues),
-      mode: pick(modes),
-      slots: rand(8, 16),
-      fee: rand(0, 1200)
-    };
+const fmt = (d) =>
+  d.toLocaleString("ja-JP", {
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
-  const news = Array.from({length: 4}).map((_, i) => {
-    const d = new Date(now.getTime() - rand(2, 72)*60*60*1000);
-    return {
-      title: `${pick(newsObj)} を${pick(newsVerb)}`,
-      when: d,
-      note: ["今週のベストスローを掲載。", "参加枠が少ないのでお早めに。", "次回はCricket強化回。", "新しい練習メニューを追加。"][i]
-    };
-  });
+function normalizeData(raw) {
+  const toDate = (x) => (x instanceof Date ? x : new Date(x));
 
-  const stats = [
-    {big: members.length, lbl: "Active members"},
-    {big: events.length, lbl: "Events scheduled"},
-    {big: rand(120, 260), lbl: "Throws logged / week"},
-    {big: rand(18, 35) + "%", lbl: "Avg checkout rate"}
-  ];
+  const members = Array.isArray(raw.members) ? raw.members.slice() : [];
+  const events = Array.isArray(raw.events) ? raw.events.slice() : [];
+  const news = Array.isArray(raw.news) ? raw.news.slice() : [];
+  const stats = Array.isArray(raw.stats) ? raw.stats.slice() : [];
 
-  return { members, events, news, stats };
-})();
+  events.forEach((e) => (e.when = toDate(e.when)));
+  news.forEach((n) => (n.when = toDate(n.when)));
+
+  // Sort
+  events.sort((a, b) => a.when - b.when);
+  news.sort((a, b) => b.when - a.when);
+  members.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+
+  return {
+    club: raw.club || {},
+    members,
+    events,
+    news,
+    stats,
+  };
+}
+
+async function loadData() {
+  // cache busting for GitHub Pages / CDN
+  const url = `${DATA_URL}?v=${Date.now()}`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to load data: ${res.status}`);
+  const raw = await res.json();
+  return normalizeData(raw);
+}
 
 /* =========================
    Render helpers
    ========================= */
 const el = (tag, cls) => {
   const x = document.createElement(tag);
-  if(cls) x.className = cls;
+  if (cls) x.className = cls;
   return x;
 };
 
-function renderStats(){
+let DATA = null;
+
+function applyClubMeta(){
+  const club = DATA.club || {};
+  if(club.name){
+    document.getElementById("clubName").textContent = club.name;
+    document.getElementById("clubNameFooter").textContent = club.name;
+    document.title = club.name;
+  }
+  if(club.tagline){
+    document.getElementById("clubTagline").textContent = club.tagline;
+  }
+  if(club.status){
+    document.getElementById("clubStatus").textContent = club.status;
+  }
+}
+
+function renderStats() {
   const root = document.getElementById("stats");
   root.innerHTML = "";
-  DATA.stats.forEach(s => {
-    const box = el("div","stat");
+  (DATA.stats || []).forEach((s) => {
+    const box = el("div", "stat");
     box.innerHTML = `<div class="big">${s.big}</div><div class="lbl">${s.lbl}</div>`;
     root.appendChild(box);
   });
 }
 
-function renderNews(){
+function renderNews() {
   const root = document.getElementById("news");
   root.innerHTML = "";
-  DATA.news.forEach(n => {
-    const row = el("div","item");
+  (DATA.news || []).forEach((n) => {
+    const row = el("div", "item");
     row.innerHTML = `
       <div class="left">
         <div style="font-weight:800">${n.title}</div>
-        <div class="muted" style="font-size:12px">${n.note}</div>
+        <div class="muted" style="font-size:12px">${n.note || ""}</div>
       </div>
       <div class="right">
         <div class="mono" style="font-size:12px">${fmt(n.when)}</div>
-        <div class="badge" style="margin-left:auto"><span class="dot" style="background:var(--a2)"></span> Update</div>
+        <div class="badge" style="margin-left:auto"><span class="dot" style="background:var(--led-g)"></span> Update</div>
       </div>
     `;
     root.appendChild(row);
   });
 }
 
-function renderEvents(){
+function renderEvents() {
   const root = document.getElementById("eventList");
   root.innerHTML = "";
-  DATA.events.forEach(e => {
-    const row = el("div","item");
+  (DATA.events || []).forEach((e) => {
+    const row = el("div", "item");
     row.innerHTML = `
       <div class="left">
         <div style="font-weight:900">${e.title}</div>
@@ -558,12 +665,12 @@ function renderEvents(){
   });
 }
 
-function renderMembers(){
+function renderMembers() {
   const root = document.getElementById("memberGrid");
   root.innerHTML = "";
-  DATA.members.slice(0,6).forEach(m => {
-    const card = el("div","member");
-    const tags = m.tags.map(t => `<span class="tag">${t}</span>`).join("");
+  (DATA.members || []).slice(0, 6).forEach((m) => {
+    const card = el("div", "member");
+    const tags = (m.tags || []).map((t) => `<span class="tag">${t}</span>`).join("");
     card.innerHTML = `
       <div class="name">${m.name}</div>
       <div class="role">${m.role} • Specialty: <b style="color:var(--text)">${m.specialty}</b></div>
@@ -578,15 +685,15 @@ function renderMembers(){
   });
 }
 
-function renderRank(){
+function renderRank() {
   const root = document.getElementById("rankList");
   root.innerHTML = "";
-  DATA.members.forEach((m, idx) => {
-    const row = el("div","item");
-    const medal = idx===0 ? "👑" : idx===1 ? "🥈" : idx===2 ? "🥉" : "•";
+  (DATA.members || []).forEach((m, idx) => {
+    const row = el("div", "item");
+    const medal = idx === 0 ? "👑" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : "•";
     row.innerHTML = `
       <div class="left">
-        <div style="font-weight:900">${medal} #${idx+1} ${m.name}</div>
+        <div style="font-weight:900">${medal} #${idx + 1} ${m.name}</div>
         <div class="muted" style="font-size:12px">${m.role} • ${m.specialty}</div>
       </div>
       <div class="right">
@@ -598,29 +705,40 @@ function renderRank(){
   });
 }
 
-function initClock(){
+function initClock() {
   const nowEl = document.getElementById("now");
-  const tick = () => nowEl.textContent = new Date().toLocaleString("ja-JP");
-  tick(); setInterval(tick, 1000);
+  const tick = () => (nowEl.textContent = new Date().toLocaleString("ja-JP"));
+  tick();
+  setInterval(tick, 1000);
 }
 
-function initCountdown(){
+function initCountdown() {
   const badge = document.getElementById("liveBadge");
-  const next = DATA.events[0].when;
+  const next = (DATA.events && DATA.events[0] && DATA.events[0].when) ? DATA.events[0].when : null;
+
   const tick = () => {
+    if (!next) {
+      badge.textContent = "No upcoming events";
+      return;
+    }
     const ms = next - new Date();
-    if(ms <= 0){ badge.textContent = "Now live: Open practice"; return; }
-    const m = Math.floor(ms/60000), s = Math.floor((ms%60000)/1000);
-    badge.textContent = `Next match in ${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+    if (ms <= 0) {
+      badge.textContent = "Now live: Open practice";
+      return;
+    }
+    const m = Math.floor(ms / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    badge.textContent = `Next match in ${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   };
-  tick(); setInterval(tick, 1000);
+  tick();
+  setInterval(tick, 1000);
 }
 
-function initTheme(){
+function initTheme() {
   const btn = document.getElementById("themeBtn");
   const body = document.body;
   const saved = localStorage.getItem("odc_theme");
-  if(saved) body.setAttribute("data-theme", saved);
+  if (saved) body.setAttribute("data-theme", saved);
 
   btn.addEventListener("click", () => {
     const cur = body.getAttribute("data-theme") || "dark";
@@ -630,44 +748,63 @@ function initTheme(){
   });
 }
 
-function initShare(){
+function initShare() {
   const btn = document.getElementById("copyUrlBtn");
   btn.addEventListener("click", async () => {
     const url = location.href;
-    try{
+    try {
       await navigator.clipboard.writeText(url);
       toast(`リンクをコピーしました`);
-    }catch{
+    } catch {
       toast(`コピーできませんでした（権限/ブラウザ制限）`);
     }
   });
 }
 
-function toast(msg){
+function toast(msg) {
   const t = document.getElementById("toast");
   t.querySelector(".muted").textContent = msg;
   t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"), 2400);
+  setTimeout(() => t.classList.remove("show"), 2400);
 }
 
-function initJoin(){
+function initJoin() {
   document.getElementById("toastBtn").addEventListener("click", () => {
     toast("参加申請（仮）を作成しました：フォームURLに差し替えて運用してください。");
   });
 }
 
-/* Boot */
-document.getElementById("year").textContent = new Date().getFullYear();
-renderStats();
-renderNews();
-renderEvents();
-renderMembers();
-renderRank();
-initClock();
-initCountdown();
-initTheme();
-initShare();
-initJoin();
+function showDataError(msg){
+  const box = document.getElementById("dataError");
+  box.style.display = "block";
+  box.textContent = msg;
+}
+
+/* Boot (async) */
+(async function boot() {
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  try {
+    DATA = await loadData();
+    applyClubMeta();
+  } catch (e) {
+    console.error(e);
+    toast("データ読み込みに失敗しました：data/club-data.json を確認してください。");
+    showDataError("⚠ データ読み込み失敗： ./data/club-data.json が存在するか、JSON文法が正しいか確認してください（ローカルはLive Server推奨）。");
+    DATA = { club:{}, members: [], events: [], news: [], stats: [] };
+  }
+
+  renderStats();
+  renderNews();
+  renderEvents();
+  renderMembers();
+  renderRank();
+  initClock();
+  initCountdown();
+  initTheme();
+  initShare();
+  initJoin();
+})();
 </script>
 </body>
 </html>
