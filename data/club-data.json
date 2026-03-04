@@ -75,7 +75,7 @@
       "checkout_rate": 38,
       "specialty": "501",
       "tags": ["Finisher", "Mental", "Checkout 60+"],
-      "avatar": "/assets/avatars/takahashi.png"
+      "avatar": "./assets/avatars/takahashi.png"
     },
     {
       "name": "Lyra K.",
