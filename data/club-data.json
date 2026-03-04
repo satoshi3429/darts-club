@@ -5,10 +5,10 @@
     "status": "Open"
   },
   "stats": [
-    { "big": 12, "lbl": "Active members" },
-    { "big": 5, "lbl": "Events scheduled" },
-    { "big": 180, "lbl": "Throws logged / week" },
-    { "big": "31%", "lbl": "Avg checkout rate" }
+    { "big": 12, "lbl": "Active members", "unit": "" },
+    { "big": 5, "lbl": "Events scheduled", "unit": "" },
+    { "big": 180, "lbl": "Throws logged / week", "unit": "" },
+    { "big": 31, "lbl": "Avg checkout rate", "unit": "%" }
   ],
   "news": [
     {
@@ -67,22 +67,22 @@
     }
   ],
   "members": [
-
     {
       "name": "ATSUSHI T.",
       "role": "Captain",
       "rating": 1720,
       "checkout": "38%",
+      "checkout_rate": 38,
       "specialty": "501",
       "tags": ["Finisher", "Mental", "Checkout 60+"],
       "avatar": "./assets/avatars/takahashi.png"
     },
-
     {
       "name": "Lyra K.",
       "role": "Analyst",
       "rating": 1655,
       "checkout": "34%",
+      "checkout_rate": 34,
       "specialty": "Cricket",
       "tags": ["Consistency", "Setup", "Bull Hunter"]
     },
@@ -91,6 +91,7 @@
       "role": "Coach",
       "rating": 1602,
       "checkout": "32%",
+      "checkout_rate": 32,
       "specialty": "Around the Clock",
       "tags": ["Tempo", "Fast Feedback", "T20 Focus"]
     },
@@ -99,6 +100,7 @@
       "role": "Sharpshooter",
       "rating": 1588,
       "checkout": "30%",
+      "checkout_rate": 30,
       "specialty": "301",
       "tags": ["T20 Focus", "Tempo"]
     },
@@ -107,6 +109,7 @@
       "role": "Closer",
       "rating": 1540,
       "checkout": "29%",
+      "checkout_rate": 29,
       "specialty": "501",
       "tags": ["Finisher", "Mental"]
     },
@@ -115,8 +118,10 @@
       "role": "Rookie",
       "rating": 1465,
       "checkout": "25%",
+      "checkout_rate": 25,
       "specialty": "Cricket",
       "tags": ["Consistency", "Setup"]
     }
   ]
 }
+``
